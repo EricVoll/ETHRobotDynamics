@@ -9,7 +9,7 @@ Parts:
 Matlab functions used somewhere in the lecture exercises or generally usefull functions. 
 
 # 2. Robot Dynamics Summary
-An original latex summary was found at https://www.zumguy.com, and extended from there on. A current pdf-build should be in the "Summary" folder.
+An original latex summary was found at http://www.zumguy.com, and extended from there on. A current pdf-build should be in the "Summary" folder.
 
 # 3. Robot Dynamics C# Library & Unity Examples
 The exact theories covered in the first part of the RD lecture (Forward / Inverse Kinematics & trajectory control) have been implemented in C# stand-alone .NET CORE libraries, and are show-cased in a Unity project. As an example a (rather poorly) modelled FANUC Cr7 was used. The corresponding repository with further information can be found [here](https://github.com/luchspeter/RobotDynamicsLibrary "Robot Dynamics Library"). 
