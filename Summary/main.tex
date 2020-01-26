@@ -11,7 +11,6 @@
 
 % Multi-column layout
 \usepackage{multicol}
-
 % Manually set page margins
 \usepackage[margin=0.5cm]{geometry}
 
@@ -29,6 +28,10 @@
 \usepackage{bm}
 %\usepackage[shortlabels]{enumitem}
 
+% Additional Packages
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
 
 %%%% Useful
 % Negative margins on equations: \mkern-36mu
@@ -46,9 +49,9 @@
 
 
 %%%% Title & author
-\title{Robot Dynamics HS18}
-\author{Sean Bone \\ http://weblog.zumguy.com/ }
-\date{ January 30, 2019 }
+\title{Robot Dynamics HS19}
+\author{Thomas Bucher \\ \ \\ Based on Summary of Sean Bone \\ http://weblog.zumguy.com/ }
+\date{ \today }
 
 %%%% Custom commands
 \newcommand{\mvec}[3]{  \prescript{}{\mathcal{#1}}{\bm{#2}}  _{#3} }
@@ -68,20 +71,15 @@
 
 \maketitle
 
-\begin{align*}
-\boxed{\begin{smallmatrix}
-(\sin(x))'\, =\, -\cos(x)\\
-(\cos(x))'\, =\, \sin(x)
-\end{smallmatrix}}
-\end{align*}
 
 \section{Parametrizations}
 \subsection{Position and velocity}
 For every position parametrization, there is a linear mapping between linear velocities $\dot{\bm{r}}$ and derivatives of the representation $\dot{\bm{\chi}}$.\\
 $\mdvec{}{r}{} = \bm{E}_P(\mvec{}{\chi}{P})\mdvec{}{\chi}{P},\; \mdvec{}{\chi}{P} = \bm{E}_P(\mvec{}{\chi}{P})^{-1}\mdvec{}{r}{}$\\
 
-\noindent\textbf{Cartesian Coordinates:} $\bm{E}_{P_c} = \mathbb{I}$\\
-$\mvec{}{\chi}{P_c} = [x \quad y \quad z]^T,\; \mvec{A}{r}{} = [x \quad y \quad z]^T$
+\noindent\textbf{Cartesian Coordinates:}\\
+$\bm{E}_{P_c} = \mathbb{I}$\\
+$\mvec{}{\chi}{P_c} = [x \quad y \quad z]^T,\; \mvec{A}{r}{} = [x \quad y \quad z]^T$\\
 
 \noindent\textbf{Cylindrical coordinates:}\\
 $\mvec{}{\chi}{P_z} = [\rho \quad \theta \quad z]^T,$\\
@@ -101,23 +99,25 @@ $\bm E_{P_z}^{-1} =
 
 \noindent\textbf{Spherical coordinates:}\\
 $\mvec{}{\chi}{P_s} = [r \quad \theta \quad \phi]^T,$\\
-$\mvec{A}{r}{} = [r\cos\theta\sin\phi \quad r\sin\theta\cos\phi \quad z]^T$
-$\left[\begin{smallmatrix} 
+$\mvec{A}{r}{} = [r\cos\theta\sin\phi \quad r\sin\theta\cos\phi \quad z]^T$\\
+$\bm E_{P_s}=\left[\begin{smallmatrix} 
 \cos\theta\sin\phi  &  -r\sin\phi\sin\theta  &  r\cos\phi\cos\theta \\
 \sin\phi\sin\theta  &  r\cos\theta\sin\phi   &  r\cos\phi\sin\theta\\
 \cos\phi  &  0  &  -r\sin\phi
 \end{smallmatrix}\right]$\\
-$\left[ \begin{smallmatrix} 
+$\bm E_{P_s}^{-1}=\left[ \begin{smallmatrix} 
 \cos\theta\sin\phi  &  \sin\phi\sin\theta  &  \cos\phi\\
 -\sin\theta/(r\sin\phi)  &  \cos\theta/(r\sin\phi)  &  0\\
 (\cos\phi\cos\theta)/r  &  (\cos\phi\sin\theta)/r  & -\sin\phi/r
 \end{smallmatrix} \right]$
 
+\includegraphics[width=0.85\linewidth]{images/Overview_Coordinates.PNG}
 
 \subsection{Rotation}
-$\atan2(y,x) \coloneqq \taninv(\frac{y}{x})$, checking for correct quadrant.\\
+%$\atan2(y,x) \coloneqq \taninv(\frac{y}{x})$, checking for correct quadrant.\\
 $\mvec{A}{u}{} = \mrot{C}{AC} \cdot \mvec{C}{u}{} = \mrot{C}{AB}\mrot{C}{BC} \cdot \mvec{C}{u}{}$\\
-$\mrot{C}{BA} = \mrot{C}{AB}^{-1} = \mrot{C}{AB}^T$
+$\mrot{C}{BA} = \mrot{C}{AB}^{-1} = \mrot{C}{AB}^T$\\
+$\mrot{C}{AB}\mrot{C}{AB}^T=I_{n}$ (Orthogonality)
 
 \noindent\textbf{Elementary rotations:}
 
@@ -167,7 +167,7 @@ $\mvec{}{\chi}{R,XYZ} = \left(\begin{smallmatrix}
 \atan2(c_{12}, -c_{11})
 \end{smallmatrix}\right)$
 
-\noindent\textbf{Angle-axis}:\\
+\noindent\textbf{Angle-axis/Rotation-vector (non-minimal)}:\\
 \vspace{-2em}
 \begin{multline*}
 \mkern-36mu
@@ -181,10 +181,10 @@ c_{32} - c_{23}\\
 c_{31} - c_{13}\\
 c_{21} - c_{12}
 \end{smallmatrix}\right),\, \\
-\theta = \cosinv(\frac{c_{11} + c_{22} + c_{33} - 1}{2}),\, \bm \varphi = \theta\cdot\textbf n
+\theta = \cosinv(\frac{c_{11} + c_{22} + c_{33} - 1}{2}),\, \bm \varphi = \theta\cdot\textbf n (n unit)
 \end{multline*}
 
-\noindent\textbf{Unit Quaternions}:\\
+\noindent\textbf{Unit Quaternions (non-minimal)}:\\
 $\mvec{}{\chi}{R,quat} = \mvec{}{\xi}{} = \left(\begin{smallmatrix}
 \xi \\
  \check{\mvec{}{\xi}{}}
@@ -226,7 +226,7 @@ $\left[ \begin{smallmatrix}\mvec{A}{\omega}{AB}\end{smallmatrix} \right]_{\times
  \omega_z  &  0  & -\omega_x \\
 -\omega_y  &  \omega_x  &  0
 \end{smallmatrix}\right] = \dot{\textbf C}_\mathcal{AB}\mrot{C}{AB}^T$
-$\mvec{A}{\omega}{AB} = \bm{E}_R(\mvec{}{\chi}{R})\mdvec{}{\chi}{R}$
+$\mvec{A}{\omega}{AB} = \bm{E}_R(\mvec{}{\chi}{R})\mdvec{}{\chi}{R}$ (see Script p.23-25)
 
 
 \subsection{Transformations}
@@ -283,13 +283,21 @@ $$
 
 
 
-\subsection{Geometric Jacobian}
+\subsection{Geometric / Basic Jacobian}
 $$\textbf{w}_E = \begin{bmatrix} \textbf v_E \\ \omega_E \end{bmatrix} = J_0(\mathbf q)\dot{\mathbf q}$$
-$$J_0(\mathbf q) = \begin{bmatrix} 
+$$J_{0 re}(\mathbf q) = \begin{bmatrix} 
 J_{0,P} \\ J_{0,R} \end{bmatrix} = 
 \begin{bmatrix}
 \mathbf n_1 \times \mathbf r_{1,E} & ... & \mathbf n_n \times \mathbf r_{n,E} \\
-\mathbf n_1 & ... & \mathbf n_n \end{bmatrix}$$
+\mathbf n_1 & ... & \mathbf n_n \end{bmatrix}$$\\
+$$J_{0 pr}(\mathbf q) = \begin{bmatrix} 
+J_{0,P} \\ J_{0,R} \end{bmatrix} = 
+\begin{bmatrix}
+\mathbf n_1  & ... & \mathbf n_n \\
+\mathbf 0 & ... & \mathbf 0 \end{bmatrix}$$\\
+$$\mvec{I}{n}{i}=\mrot{C}{\text{I i-1}} \mvec{\text{i-1}}{n}{i}$$\\
+$$\Longrightarrow J_{0}(q)=E_{e}(\chi)J_{A}(q)$$\\
+For planar systems: $J_{0}(q)=J_{A}(q)$\\
 
 
 
@@ -298,15 +306,17 @@ $$\textbf{w}_E = J\dot{\mathbf q} \Rightarrow
 \dot{\mathbf q} = J^+ \textbf w_E$$
 where $J^+ = J^T(JJ^T)^{-1}$ (Moore-Penrose). However we risk encountering singular configurations $\mathbf q_s$ where $rank(J(\mathbf q_s)) < m_0$, $m_0$ being the number of operational-space coordinates. Here $J$ is badly conditioned. We can mitigate this by using a redundant robot to carefully avoid singularities, and/or by damping the pseudo-inverse:
 $$\dot{\mathbf q} = J^T(JJ^T + \lambda^2\mathbb{I})^{-1} \textbf w_E$$
-Now the pseudo-inverse minimizes $||\textbf w_E^* - J\dot{\textbf q}||^2 + \lambda^2||\dot{\mathbf q}||^2$ instead of just $||\textbf w_E^* - J\dot{\textbf q}||^2$, so convergence is slower but more stable for larger $\lambda$.
+Now the pseudo-inverse minimizes $||\textbf w_E^* - J\dot{\textbf q}||^2 + \lambda^2||\dot{\mathbf q}||^2$ instead of just $||\textbf w_E^* - J\dot{\textbf q}||^2$, so convergence is slower but more stable for larger $\lambda$.\\
 
 In a redundant configuration $q^*$ where $rank(J(\mathbf q^*)) < n$, the pseudoinverse minimizes $||\dot{\textbf q}||^2$ while satisfying $\textbf{w}_E^* = J\dot{\mathbf q}$ by using
+$$ \dot{\mathbf q}=J\textbf{w}_E^*+N\dot{\mathbf q}_0$$
 $$J(J^+\textbf w_E^* + N\dot{\mathbf q}_0) = \textbf w_E^* \quad \forall\dot{\mathbf q}_0$$
-where $N = \mathbb I - J^+J$.
+where $N = \mathbb I - J^+J \longrightarrow JN=0$.
 
 
 
 \subsection{Multi-task IDK}
+\subsubsection*{Equal Priority}
 Given $n_t$ tasks $\{J_i, \textbf w^*_i\}$, we have:
 $$\dot{\textbf q} = \left[\begin{smallmatrix}
 J_1\\ \vdots \\ J_{n_t}
@@ -314,7 +324,7 @@ J_1\\ \vdots \\ J_{n_t}
 \textbf w_1^* \\ \vdots \\ \textbf w_{n_t}^*
 \end{smallmatrix}\right)$$
 In case the row-rank of the stacked Jacobian is greater that the column-rank, we are only minimizing $||\bar{\textbf w} - \bar J\dot{\textbf q}||^2$. We can weigh the tasks with
-$$\bar J^{+W} = (\bar J^T W \bar J)^{-1}\bar J W$$
+$$\bar J^{+W} = (\bar J^T W \bar J)^{-1}\bar J^{T} W$$
 where $W = diag(w_1,...,w_m)$ and we minimize $||W^{1/2}(\bar{\textbf w} - \bar J\dot{\textbf q})||^2$.
 
 
@@ -331,10 +341,11 @@ In general:
 \dot{\mathbf q} &= \sum_{i=1}^{n_t}\bar N_i \dot{\mathbf q}_i \\ 
 \dot{\mathbf q}_i &= (J_i \bar N_i)^+ \left( \textbf w_i^* - J_i \sum_{k=1}^{i-1}\bar N_k \dot{\mathbf q}_k \right)
 \end{align*}
-
+whereby $\bar N_i$ is the Nullspace of the stacked Jacobian $\bar J_{i}=[J_{1}^{T} \ldots J_{i-1}^{T}]$. With 2 tasks we first min$||\dot{q}||^2$ and then min$||J_{2}\dot{q}-{\bf w_{2}}||^2$ s.t. $J_{1}\dot{q}-{\bf w_{1}}=0$
 
 
 \subsection{Inverse Kinematics}
+Genernal goal: $q=q(\chi^*)$
 \begin{enumerate}
 \item $\mathbf q \leftarrow \textbf q^0$
 \item While $||\bm\chi_e^* \boxminus \bm\chi_e(\mathbf q)|| > tol$ do
@@ -343,27 +354,27 @@ In general:
 \item \hspace{1em} $\Delta\bm\chi_e \leftarrow \bm\chi_e^* \boxminus \bm\chi_e(\mathbf q)$
 \item \hspace{1em} $\mathbf q \leftarrow \mathbf q + J_A^+\Delta\bm\chi_e$
 \end{enumerate}
-One issue is that for very large errors $\Delta\bm\chi_e$, we get too imprecise. We can avoid this by scaling the update with a factor $0 < k < 1$: $\mathbf q \leftarrow \mathbf q + kJ_A^+\Delta\bm\chi_e$. But we still have issues inverting $J_A$ in singular configurations. An alternative is $\mathbf q \leftarrow \mathbf q + \alpha J_A^T\Delta\bm\chi_e$, which converges for small $\alpha$.
+One issue is that \textbf{for very large errors $\Delta\bm\chi_e$}, we get too imprecise. We can avoid this by scaling the update with a factor $0 < k < 1$: $\mathbf q \leftarrow \mathbf q + kJ_A^+\Delta\bm\chi_e$. But we still have issues inverting $J_A$ in \textbf{singular configurations}. An alternative is $\mathbf q \leftarrow \mathbf q + \alpha J_A^T\Delta\bm\chi_e$, which converges for small $\alpha$.
 We must also appropriately compute the difference $\bm\chi_e^* \boxminus \bm\chi_e(\mathbf q)$ depending on the parametrization. For cartiesian coordinates, this is regular vector subtraction. Also note that with cartesian coordinates $J_{0,P} = J_{A,P}$. For rotational difference we can extract the rotation vector $\Delta\bm\varphi$ from the "rotation difference", and use that for the update:
 \begin{align*}
-\mrot{C}{GS}(\Delta\bm\varphi) &= \mrot{C}{GI}(\bm\varphi^*)\mrot{C}{SI}(\bm\varphi^t)\\
+\mrot{C}{GS}(\Delta\bm\varphi) &= \mrot{C}{GI}(\bm\varphi^*)\mrot{C}{SI}(\bm\varphi^t)^{T}\\
 \mathbf q &\leftarrow \mathbf q + k_{p_R}J_{0,R}^+\Delta\bm\varphi
 \end{align*}
 
 
 
 \subsection{Trajectory control}
-Position: with $\Delta\mathbf r^t_e = \mathbf r^*_e(t) - \mathbf r_e(\mathbf q^t)$
+\textbf{Position:} with $\Delta\mathbf r^t_e = \mathbf r^*_e(t) - \mathbf r_e(\mathbf q^t)$
 $$\dot{\mathbf q}^* = J_{e0P}^+(\mathbf q^t) (\dot{\mathbf r}^*_e(t) + k_{p_P}\Delta\mathbf r^t_e)$$
-Orientation: with $\Delta\bm\varphi$ as above,
+\textbf{Orientation:} with $\Delta\bm\varphi$ as above,
 $$\dot{\mathbf q}^* = J_{e0R}^+(\mathbf q^t) (\bm\omega^*_e(t) + k_{p_R}\Delta\bm\varphi)$$
 
 
 
 
 
-
 \section{Dynamics}
+% Add Computation of M, b and g in EoM. Specific calculation of M with mass and inertia (hence also conversion of intertia tensors in different frames)
 $$\boxed{\mathbf{ M(q)\ddot{q} + b(q,\dot q) + g(q)} = 
 \bm\tau + \mathbf{J}_c(\mathbf q)^T \mathbf F_c}$$
 
@@ -387,7 +398,7 @@ $$\boxed{\mathbf{ M(q)\ddot{q} + b(q,\dot q) + g(q)} =
 
 
 
-\subsection*{Newton-Euler method}
+\subsection{Newton-Euler method}
 \begin{itemize}
 \item $m$ body mass
 \item $\bm\Theta_S$ inertia matrix around CoG
@@ -407,9 +418,9 @@ For calculations all quantities must be in the same coordinate system. For the i
 
 
 
-\subsection*{Lagrange method}
+\subsection{Lagrange method}
 Define the \emph{Lagrangian function}:
-$$\mathcal L \coloneqq \mathcal T - \mathcal U$$
+$$\mathcal L = \mathcal T - \mathcal U$$
 Where $\mathcal T$ is the kinetic energy and $\mathcal U$ the potential energy. Then the \emph{Euler-Lagrange equation of the second kind} holds for the total external generalized forces $\bm\tau$:
 $$\frac{\text d}{\text dt} \left( \frac{\partial\mathcal L}{\partial \dot{\bf q}} \right) - \left( \frac{\partial\mathcal L}{\partial \bf q} \right) = \bm\tau$$
 The kinetic energy for a system of $n_b$ bodies is defined as:
@@ -425,16 +436,15 @@ Here we have $n_E$ elastic components with coefficients $k_j$ and rest configura
 
 
 
-\subsection*{Projected Newton-Euler Method}
+\subsection{Proj. Newton-Euler Method}
 \begin{align*}
 \mathbf M &= \sum_{i = 1}^{n_b} (\mvec{A}{J}{S_i}^T m \mvec{A}{J}{S_i} + \mvec{B}{J}{R_i}^T \mvec{B}{\Theta}{S_i} \mvec{B}{J}{R_i}) \\
 \mathbf b &= \sum_{i = 1}^{n_b} (\mvec{A}{J}{S_i}^T m \mdvec{A}{J}{S_i}\dot{\bf q} + \mvec{B}{J}{R_i}^T ( \mvec{B}{\Theta}{S_i} \mdvec{B}{J}{R_i}\dot{\bf q}\\
-& \mkern174.5mu + \mvec{B}{\Omega}{S_i} \times \mvec{B}{\Theta}{S_i} \mvec{B}{\Omega}{S_i})) \\
-\mathbf g &= \sum_{i=1}^{n_b}(-\mvec{A}{J}{S_i}^T \mvec{A}{F}{g,i})
+& \mkern50mu+ \mvec{B}{\Omega}{S_i} \times \mvec{B}{\Theta}{S_i} \mvec{B}{\Omega}{S_i})) \\
+\mathbf g &= \sum_{i=1}^{n_b}(-\mvec{A}{J}{S_i}^T \mvec{A}{F}{g,i})\\
+\tau _{F,ext} &= \sum_{j=1}^{n_{f,ext}} J_{P,j}^T F_{j}\\
+\tau _{T,ext} &= \sum_{k=1}^{n_{m,ext}} J_{R,k}^T T_{ext,k}\\
 \end{align*}
-
-
-
 
 
 \section{Floating-base dynamics}
@@ -445,18 +455,18 @@ $$\boxed{\mathbf{ M(q)\dot{u} + b(q, u) + g(q)} = \mathbf{S}^T\bm\tau + \mathbf{
 
 \begin{itemize}
 \item $\mathbf{u,\dot u} \in \mathbb{R}^{n_u}$ Gen. vel., accel.
-\item $\bf S$ selection matrix of actuated joints
+\item $\bf S$ selection matrix of actuated joints, $u_{j}=Su=[0_{6x6} \mathbb{1}_{6xn_{j}}](u_{b} u_{j})^T$
 \item $\mathbf{F}_{ext} \in \mathbb{R}^{3\times n_c}$ External cartesian forces acting on robot
 \item $\mathbf J_{ext}(\mathbf q) \in \mathbb R^{n_c\times n_u}$ Geometric Jacobian of location where external forces apply
 \end{itemize}
-\noindent Position and velocity of a point $Q$ on the robot: 
+\noindent \textbf{Position and velocity} of a point $Q$ on the robot: 
 \begin{align*}
 \mvec{I}{r}{IQ}({\bf q}) = \mvec{I}{r}{IB}({\bf q}) + \mrot{C}{IB}({\bf q}) \cdot \mvec{B}{r}{BQ}({\bf q})\\
 \mvec{I}{v}{Q} = \underbrace{\left[\begin{smallmatrix} \mathbb{I}_{3\times 3} & -\mrot{C}{IB} \cdot [\mvec{B}{r}{BQ}]_{\times} & \mrot{C}{IB} \cdot \mvec{B}{J}{P_{q_j}}({\bf q}_j) \end{smallmatrix}\right]}_{ = \mvec{I}{J}{Q}({\bf q})}\cdot {\bf u}
 \end{align*}
 
 
-\subsection*{Contact kinematics}
+\subsection{Contact kinematics}
 The point of contant $C$ is not allowed to move: ${\bf r}_C = const.$ and $\dot{\bf r}_C = \ddot{\bf r}_C = \bm 0$. Written in generalized coordinates these are:
 $$\mvec{I}{J}{C_i}{\bf u} = \bm 0, \quad \mvec{I}{J}{C_i}\dot{\bf u} + \mdvec{I}{J}{C_i}{\bf u} = \bm 0$$
 We can therefore stack the constraint Jacobians:
@@ -480,11 +490,12 @@ The contact Jacobian tells us how the system can move. If we partition it into t
 \item $rank({\bf J}_c) - rank({\bf J}_{c,b})$ is the number of contraints on the actuators.
 \end{itemize}
 
-A typical quadruped has 18 DoF (6 for base, 12 actuators). Each foot in contact with the ground adds 3 total constraints. One foot on the ground allows us to control 3 base DoFs, two feet 5, and three or more allow us to control all base DoFs.
+Quadruped (18 DoF; 6 for base, 12 actuators):\\
+\includegraphics[width=1.05\linewidth]{images/Contraints_Quad.PNG}
 
 
 
-\subsection*{Support-consistent dynamics}
+\subsection{Support-consistent dynamics}
 If we use {\bf soft contacts} to model the contact, we simply introduce an external force acting on the robot:
 $${\bf F}_c = k_p({\bf r}_c - {\bf r}_{c0}) + k_d\dot{\bf r}_c$$
 However such problems are hard to accurately solve numerically (slow system dynamics, fast contact dynamics). 
@@ -504,53 +515,53 @@ E_{loss} &= \Delta E_{kin} = - \frac 12 \Delta{\bf u}^T{\bf M}\Delta{\bf u} = - 
 \end{align*}
 
 
-
-
-
-
-
 \section{Dynamic control}
 
-\subsection*{Joint impedance control}
+\subsection{Joint-space Dynamic Control}
 $$\boxed{\mathbf{ M(q)\ddot{q} + b(q,\dot q) + g(q)} = 
 \bm\tau}$$
 
 Torque as a function of position and velocity error:
 $${\bm \tau}^* = k_p({\bf q}^* - {\bf q}) + k_d(\dot{\bf q}^* - \dot{\bf q})$$
 
-Compensate for gravity by adding an estimated gravity term:
+\textbf{Compensate for gravity} by adding an estimated gravity term:
 $${\bm \tau}^* = k_p({\bf q}^* - {\bf q}) + k_d(\dot{\bf q}^* - \dot{\bf q}) + \hat{\bf g}({\bf q})$$
 
-\subsection*{Inverse dynamics control}
-
-Compensate for system dynamics:
+Compensate for \textbf{system dynamics}:
 $$\bm\tau = \hat{\bf M}({\bf q})\ddot{\bf q}^* + \hat{\bf b}({\bf q}, \dot{\bf q}) + \hat{\bf g}({\bf q})$$
 
-If the model is exact, we have $\mathbb{I}\ddot{\bf q} = \ddot{\bf q}^*$, meaning we can perfectly control system dynamics. We could apply a PD-control law, making each joint behave like a mass-spring-damper with unitary mass:
+If the model is exact, we have $\mathbb{I}\ddot{\bf q} = \ddot{\bf q}^*$ (decoupled control), meaning we can perfectly control system dynamics. We could apply a PD-control law, making each joint behave like a mass-spring-damper with unitary mass:
 $$\ddot{\bf q}^* = k_p({\bf q}^* - {\bf q}) + k_d(\dot{\bf q}^* - \dot{\bf q})$$
 $$\omega = \sqrt{k_p}, \quad D = \frac{k_d}{2\sqrt{k_p}}$$
 
-\subsection*{Operational space control}
-Generalized framework to control motion and force. End-effector dynamics:
+\newpage
+\subsection{Task-space Dynamic Control}
+$$\boxed{\dot{\bf w_{e}}
+ =J_{e} \ddot{q} + \dot{J_{e}} \dot{q}=J_{e}M^{-1}(\tau - b -g)+\dot{J_{e}} \dot{q}}$$
+ $$ \tau = J_{e}^{T}F_{e} \quad \textrm{,} \quad \ddot{q^*} = J_{e}^+ (\dot{\bf w_{e}}^* - \dot{J_{e}} \dot{{q}})$$ 
+\subsection*{End-Effector Motion Control}
+Generalized framework to control motion and force. \textbf{End-effector dynamics}:
 \begin{align*}
 \bm\Lambda \dot{\bf w}_e + \bm\mu + {\bf p} &= {\bf F}_e  \\
 \bm\Lambda &= ({\bf J}_e{\bf M}^{-1}{\bf J}_e^T)^{-1} \\
 \bm\mu     &= {\bm\Lambda}{\bf J}_e{\bf M}^{-1}{\bf b} - {\bm\Lambda}\dot{\bf J}_e\dot{\bm q} \\
 {\bf p}    &= {\bm\Lambda}{\bf J}_e{\bf M}^{-1}{\bf g} \\
-\bm\tau    &= {\bf J}_e^T{\bf F}_e\\
-\Rightarrow \bm\tau^* &= \hat{\bf J}^T(\hat{\bm\Lambda} \dot{\bf w}_e^* + \hat{\bm\mu} + \hat{\bf p})
 \end{align*}
-
-Hence we can steer the robot along any trajectory by determining the desired task-space end-effector acceleration:
+represent the end-effector inertia, centrifugal/coriolis and gravitational terms in task space.\\
+Following from the dynamics the \textbf{end-effector control} can be found:
+$$\bm\tau^* = \hat{\bf J}^T(\hat{\bm\Lambda} \dot{\bf w}_e^* + \hat{\bm\mu} + \hat{\bf p})$$
+$$\bf w_{e}^* =k_{p}\begin{pmatrix} r_{e}^* -r_{e}\\ \Delta \phi_{e}\end{pmatrix}+k_{d}(w_{e}^* - w_{e})$$
+$$ \Rightarrow \begin{pmatrix} r_{e}^* -r_{e}\\ \Delta \phi_{e}\end{pmatrix} =\begin{bmatrix}
+\mathbb{1} & 0 \\ 0 & E_{R} \end{bmatrix}$$
 $$\dot{\bf w}_e^* = k_p{\bf E}(\bm\chi^*_e \boxminus \bm\chi_e) + k_d({\bf w}_e^* - {\bf w}_e) \underbrace{+ \dot{\bf w}_e^*(t)}_\text{trajectory control} $$
 
-In order to also control the contact force, we use selection matrices:
-\begin{align*}
-\underline{{\bf F}_c} + \bm\Lambda \dot{\bf w}_e + \bm\mu + {\bf p} = {\bf F}_e \\
+\subsection*{Operational Space Control}
+$$
+\underline{{\bf F}_c} + \bm\Lambda \underline{\dot{\bf w}_e} + \bm\mu + {\bf p} = {\bf F}_e $$
+$$
 \bm\tau^* = \hat{\bf J}^T(\hat{\bm\Lambda} \underline{{\bf S}_M} \dot{\bf w}_e^* + \underline{{\bf S}_F{\bf F}_c} + \hat{\bm\mu} + \hat{\bf p})
-\end{align*}
-
-Let {\bf C} represent the rotation from the inertial frame to the contact force frame. The selection matrices can be calculated as:
+$$\newline
+with $S_{M}$ and $S_{F}$ being the selection matrices for Motion and Force. Let {\bf C} represent the rotation from the inertial frame to the contact force frame. The selection matrices can be calculated as (with $\sigma_{i} \in \{0,1\}$) :
 \begin{align*}
 \bm\Sigma_p &= \left[\begin{smallmatrix}
 \sigma_{px} & 0 & 0 \\
@@ -569,16 +580,6 @@ Let {\bf C} represent the rotation from the inertial frame to the contact force 
 {\bf 0}  &  {\bf C}^T(\mathbb I - \bm\Sigma_r) {\bf C}
 \end{smallmatrix}\right]
 \end{align*}
-
-
-\subsection*{Floating-base inverse dynamics}
-From the support-consistent dynamics:
-%{\bm \tau}^* &= ({\bf N}^T_c {\bf S}^T )^+{\bf N}_c^T({\bf M}\dot{\bf u} + {\bf b + g}) \\
-\begin{align*}
-{\bm \tau}^* &= ({\bf N}^T_c {\bf S}^T )^+{\bf N}_c^T({\bf M}\dot{\bf u} + {\bf b + g}) \underbrace{+  \mathcal{N}({\bf N}^T_c {\bf S}^T)\bm\tau^*_0}_\text{multiple solutions}
-\end{align*}
-
-
 
 \subsection*{OSC with multiple objectives}
 Example: quadruped with three stationary legs and one in swing.
@@ -618,8 +619,15 @@ Solve \textbf{with prioritization}:
 Where ${\bf N}_i$ is the nullspace projection of ${\bf J}_i \coloneqq [{\bf J}_1^T \, ... \, {\bf J}_i^T]^T$.
 
 
+\subsection{Inv. Dynamics Floating-Base}
+Given a desired acceleration $\dot{\bf u^*}$ from the support-consistent dynamics follows:
+%{\bm \tau}^* &= ({\bf N}^T_c {\bf S}^T )^+{\bf N}_c^T({\bf M}\dot{\bf u} + {\bf b + g}) \\
+\begin{align*}
+{\bm \tau}^* &= ({\bf N}^T_c {\bf S}^T )^+{\bf N}_c^T({\bf M}\dot{\bf u^*} + {\bf b + g}) \underbrace{+  \mathcal{N}({\bf N}^T_c {\bf S}^T)\bm\tau^*_0}_\text{multiple solutions}
+\end{align*}
 
-
+% --------------------- Commented out -----------------------
+\begin{comment}
 \subsection*{Quadratic minimization}
 Least squares problems can be expressed in form of quadratic minimization problems. We can also perform multiple tasks with or without prioritization:
 \begin{align*}
@@ -667,17 +675,44 @@ Rewrite the equations of motion and subsequent tasks as a prioritized sequence o
 $$\min_{\bf x} ||{\bf A}_i{\bf x - b}_i||_2 \quad {\bf x} = \begin{pmatrix}
 \dot{\bf u} \\ {\bf F}_c \\ {\bm \tau}
 \end{pmatrix}$$
+\end{comment}
+% --------------------- Commented out -----------------------
 
+\subsection*{Task-Space Control as QP}
 
+The behaviour of a robotic system can be described as multi-task control problem with the optimization variable $x$ as follows:
+$$ x_{fixed B}=\begin{pmatrix} \ddot{q} \\ F_{c} \\ \tau \end{pmatrix} \quad \textrm{or} \quad x_{floating B}=\begin{pmatrix} \dot{u} \\ F_{c} \\ \tau \end{pmatrix}$$\\
+Using the optimization variable $x$ the EoM \newline $M\ddot{q}+b+g+J_{c}^{T}F_{c}=S^{T}\tau$ can be formulated as least square problem $Ax-b=0$:
+$$A=\begin{bmatrix} \hat{M} & \hat{J_{c}^{T}} & -S^{T} \end{bmatrix} \quad \quad b=-\hat{b}-\hat{g}$$
+To achieve a desired acceleration in the \textbf{joint space $\ddot{q}$} or at a point of interest in the \textbf{task space $J\ddot{q}+\dot{J}\dot{q}=\dot{\bf w_{e}}$}:
+$$ A=\begin{bmatrix} \mathbb{I} \: \textrm{or} \: \hat{J_{i}} & 0 & 0 \end{bmatrix} \quad \quad b=\ddot{q} \: \textrm{or} \: \dot{\bf w_{e}^*}-\hat{J_{i}\dot{q}}$$\\
+Pushing with a certain force $F_{i}=F_{i}^*$:
+$$A=\begin{bmatrix} 0 & \mathbb{I} & 0 \end{bmatrix} \quad \quad b=F_{i}^*$$
 
-
+\section{Legged Robots}
+\subsection{Hierarchical Optimization}
+Formulating a Hierarchical Optimization (HO) problem as a QP:
+$$ \textrm{min}||A_{i}x-b_{i}||\quad \textrm{,} \quad C_{i}x\leq d_{i}$$\\
+Achieved by following control scheme for robots:
+\includegraphics[width=1.05\linewidth]{images/Control_Legged.PNG}\\
+The HO variable $x$ and EoM are defined as:
+$$ M(q)\ddot{q}+b(q,\dot{q})+g(q)=S^{T}\tau_{j}+J_{c}^T(q)f_{c}$$
+$$x= [\ddot{q}^T \quad f_{c}^T \quad \tau_{j}^T ]^T$$
+Task 1: Fulfill equation of Motion:
+$$ A_{1}=[M(q) -J_{c}^T -S^T] \quad \textrm{,} \quad b_{1}=-b-g$$
+Task 2: Ensure feet stationary on ground:
+$$ A_{2}=[J_{c,lin} \quad 0 \quad 0] \quad \textrm{,} \quad b_{2}=\dot{\bf w_{c}^*}-\dot{J_{c,lin}}\dot{q}$$
+Task 3: Move body accord ref. trajectory:
+$$ \dot{ w_{B}^*}=k_{p}(p_{B}^*-p_{B})+k_{d}(w_{B}^*-w_{B} $$
+$$ A_{3}=[J_{B} \quad 0 \quad 0] \quad \textrm{,} \quad b_{3}=\dot{w_{B}^*}-\dot{J_{B}}\dot{q} $$
+\textbf{...To be continued...}
 \section{Rotorcraft}
 
 Propeller thrust and drag proportional to squared rotational speed ($b$: thrust constant; $d$: drag constant):
 $$T_i = b\omega_{p,i}^2, \quad Q_i = d\omega_{p,i}^2$$
 
 
-\subsection*{Representation of rotation}
+\subsection{Kinematics}
 
 Use Tait-Bryan angles, consisting of yaw $\psi$ (Z-axis), pitch $\theta$ (Y-axis) and roll $\phi$ (X-axis). 
 $${\bf C}_{EB} = {\bf C}_{E1}({\bf z}, \psi) \cdot {\bf C}_{12}({\bf y}, \theta) \cdot {\bf C}_{2B}({\bf x}, \phi)$$
@@ -695,17 +730,18 @@ Angular velocity:
 J_r &= \begin{bmatrix}
 1 & 0 & -\sin\theta \\
 0 & \cos\phi  &  \sin\phi\cos\theta \\
-0 & -\sin\phi  &  \sin\phi\cos\theta
-\end{bmatrix}
-\end{align*}
+0 & -\sin\phi  &  \cos\phi\cos\theta
+\end{bmatrix}\overset{\theta=\phi=0}{=}\mathbb{I}_{3x3}
+\end{align*} \newline
 
-NB: singularity for $\theta = \pm \ang{90}$ (gimbal lock).
+NB: singularity for $\theta = \pm \ang{90}$ (Gimbal lock).
 
 
-\subsection*{Body Dynamics}
+\subsection{Dynamics}
+$$\boxed{ M(\varphi)\ddot{\varphi}+b(\dot{\varphi},\varphi)+g(\varphi)+J_{ext}^T F_{ext}=S^T\tau_{act}}$$
 Change of momentum and spin in the body frame (${\bf M} = $ total moment/torque):
 $$\begin{bmatrix}
-mE & 0\\
+m\mathbb{I} & 0\\
 0 & {\bf I}
 \end{bmatrix}\begin{bmatrix}
 \mdvec{B}{v}{} \\
@@ -717,7 +753,8 @@ mE & 0\\
 \mvec{B}{F}{}\\ \mvec{B}{M}{}
 \end{bmatrix}
 $$
-
+$$ \begin{bmatrix} \dot{x} \\ \dot{y}\\ \dot{z} \end{bmatrix}=C_{EB}v=C_{EB}\begin{bmatrix} u\\ v\\ w\end{bmatrix} $$
+%$$ E_{R}\begin{bmatrix} \dot{\phi}\\ \dot{\theta} \\ \dot{\psi} \end{bmatrix}=\omega=\begin{bmatrix} p \\ q \\ r\end{bmatrix}$$
 Forces and moments come from gravity and aerodynamics:
 \begin{align*}
 \mvec{B}{F}{} &= \mvec{B}{F}{G} + \mvec{B}{F}{Aero} \\
@@ -728,19 +765,67 @@ Forces and moments come from gravity and aerodynamics:
 \mvec{B}{F}{Aero} &= \sum_{i=1}^4 \begin{bmatrix}
 0 \\ 0 \\ -T_i = -b{\bf \omega}_{p,i}^2
 \end{bmatrix}\\
-\mvec{B}{M}{Aero} &= \mvec{B}{M}{T} + \mvec{B}{Q}{} = \begin{bmatrix}
+\mvec{B}{M}{Aero} &= \mvec{B}{M}{T} + \mvec{B}{Q}{} =\\ \quad & \quad  \begin{bmatrix}
 l(T_4 - T_2) \\
 l(T_1 - T_3) \\
 0
 \end{bmatrix} + \begin{bmatrix}
 0 \\ 0 \\ \sum_{i=1}^4 Q_i(-1)^{(i-1)}
 \end{bmatrix}
+\end{align*}\\
+
+Full control over all rotational speeds, independently of the current position state. \textbf{Only directly control of vertical cartesian velocity - attitude control must be used for full position control.}
+
+\subsection{Control}
+
+\textbf{Movement directions with four propellers:}
+
+\begin{center}
+    
+\includegraphics[width=0.7\linewidth]{images/RC_MovingDirections.PNG}\\
+\end{center}
+\textbf{Possible Control Structures:}
+\begin{center}
+\includegraphics[width=1\linewidth]{images/RC_Control_Structure1.PNG}\\
+    \includegraphics[width=1\linewidth]{images/RC_Control_Structure2.PNG}
+\end{center}
+To formulate the control architecture, a virtual control input $U$ is used:
+$$ \begin{pmatrix}
+U_1 \\U_2 \\U_3 \\U_4 
+\end{pmatrix}=A\begin{pmatrix}
+\omega_{1}^2 \\
+\vdots \\
+\omega_{i}^2
+\end{pmatrix} \quad \textrm{,} \quad A^{\dagger}= A^T(AA^T)^{-1}
+$$\\
+Hence the translational and rotational dynamics are stated as follows:
+\begin{align*}
+\dot{p} &= R_{EB} \mvec{B}{v}{}\\
+\mvec{B}{\dot{v}}{} &=-\omega \times \mdvec{B}{v}{}+\begin{pmatrix}
+0 \\ 0 \\ \frac{U_{1}}{m}
+\end{pmatrix}+R_{EB}^T g\\
+\dot{R}_{EB} &= R_{EB} \omega\\
+\dot{\omega} &= J^{-1}(-\omega \times J\omega+\begin{pmatrix}
+U_2 \\ U_3 \\ U_4)
+\end{pmatrix}
+\end{align*}
+\textbf{Equilibrium Point:}\\
+$$ \phi=\theta=p=q=r=0 \; \textrm{;} \; U_2=U_3=U_4=0$$
+
+$$U_{1}=mg\\
+sin(x) \approx x \; \textrm{,} \; cos(x) \approx 1$$\\
+This results in following Control Inputs:
+\begin{align*}
+    U_1 &= T_{des}\\
+    U_2 &= (\phi_{des}-\phi)k_{pRoll}-\dot{\phi}k_{dRoll}\\
+    U_3 &= (\theta_{des}-\theta)k_{pPitch}-\dot{\theta}k_{dPitch}\\
+    U_3 &= (\psi_{des}-\psi)k_{pYaw}-\dot{\psi}k_{dYaw}\\
 \end{align*}
 
-The quadrotor automatically has full control over all rotational speeds, independently of the current position state. On the other hand, it can only directly control vertical cartesian velocity - attitude control must be used for full position control.
+\textbf{...Velocity or Position Control...}
 
 
-\subsection*{Propeller aerodynamics}
+\subsection{Propeller aerodynamics}
 Propeller in hover:
 \begin{itemize}
 \item Thrust force $T$ normal to prop. plane, $|T| = \frac{\rho}{2} A_P C_T(\omega_p R_p)^2$
@@ -760,37 +845,103 @@ $$FM = \frac{\text{Ideal power to hover}}{\text{Actual power to hover}} < 1$$
 
 Blade Elemental and Momentum Theory (BEMT): blade shape determines drag and lift coefficients $c_D$, $c_L$.
 
-\includegraphics[width=\linewidth]{images/quad_rotation.png}
-
-\includegraphics[width=\linewidth]{images/quad_virtualcontrols.png}
-
-\includegraphics[width=0.7\linewidth]{images/quad_virtualcontrols2.png}
-
-\includegraphics[width=\linewidth]{images/quad_altcontrol.png}
-
-\includegraphics[width=\linewidth]{images/quad_poscontrol.png}
 
 
 
-\section{Fixed wing aerodynamics}
-For aircraft rotation, use Tait-Bryan angles (like for copters).
+\section{Fixed-Wing}
+\subsection{Aerodynamic Basics}
+\begin{center}
+    \includegraphics[width=1\linewidth, frame]{images/UAV_Airfoil.PNG}
+\end{center}
+Stall does highly depend on fluid, foil and Reynolds number:
+\begin{center}
+    \includegraphics[width=1\linewidth]{images/FW_Stall.png}
+\end{center}
+Small FW provide following control surfaces:
+\begin{center}
+    \includegraphics[width=0.7\linewidth]{images/FW_Control.png}
+\end{center}
 
 
-\includegraphics[width=\linewidth]{images/fw_airfoil.png}
 
-\includegraphics[width=\linewidth]{images/fw_axes.png}
 
-\includegraphics[width=\linewidth]{images/fw_rots1.png}
+\subsection{Kinematics}
+\textbf{Body-axis $\mathcal{B}$}\\
+Body velocity: $\mvec{\mathcal{B}}{v}{a}=(u,v,\omega)^T$\\
+Body rates: $\mvec{\mathcal{B}}{\omega}{}=(p,q,r)^T$\\
+Air-mass relative speed (airspeed): $V=\sqrt{u^2+v^2+\omega^2}$\\
+\textbf{Wind-axis $\mathcal{W}$}\\
+Angle of attack: $\alpha=tan^-1(\omega/u)$\\
+Sideslip angle: $\beta=sin^-1(v/V)$\\
+\includegraphics[width=1\linewidth]{images/FW_KinematicOverview.PNG}
+\textrm{Polar Coordinates}\\
 
-\includegraphics[width=\linewidth]{images/fw_rots2.png}
+\includegraphics[width=1\linewidth]{images/FW_Angles.png}
+$\gamma$: Flight path angle from horizon\\
+$\theta$: Pitch anlge from horixon to $x$\\
+$\phi$: Roll angle, rotation about $x$\\
+$\xi$: Heading angle, from North\\
+$\psi$: Yaw angle, from North\\
+$\chi$: Course angle from North\\
+$\mvec{\mathcal{I}}{v}{}$: Ground based internal velocity / ground speed)\\
 
-\includegraphics[width=\linewidth]{images/fw_eom_transl.png}
+$\mvec{\mathcal{I}}{v}{a}=C_{\mathcal{IB}}\mvec{\mathcal{B}}{v}{a}$
+$\mvec{\mathcal{I}}{v}{}=\mvec{\mathcal{I}}{v}{a}+\mvec{\mathcal{I}}{w}{}=\mvec{\mathcal{I}}{\dot{r}}{}=\begin{bmatrix}
+V\cos{\gamma}\cos{\xi}+\omega_{N}\\
+V\cos{\gamma}\sin{\xi}+\omega_{E}\\
+-V\sin{\gamma}+\omega_{D}
+\end{bmatrix}$
 
-\includegraphics[width=\linewidth]{images/fw_eom_rot.png}
 
-\includegraphics[width=\linewidth]{images/fw_wing_geom.png}
+\subsection{Dynamics}
+\includegraphics[width=1\linewidth]{images/FW_Dynamics.PNG}
+Lift $L=\frac{1}{2}\rho V^2Sc_{L}$\\
+Drag $D=\frac{1}{2}\rho V^2 S c_{D}$\\
+Rolling Moment $L_{m}=\frac{1}{2}\rho V^2 S b c_{l}$\\
+Pitching Moment $M_{m}=\frac{1}{2}\rho V^2 S \overline{\rm c} c_{m}$\\
+Yawing Moment $N_{m}=\frac{1}{2}\rho V^2 S b c_{n}$\\
+\newline
 
-\includegraphics[width=\linewidth]{images/fw_steadyflight.png}
+\textbf{EoM Translation}
+\begin{align*}
+    \dot{u} &= rv-qw+\frac{1}{2}(F_{T}\cos{\epsilon}-D\cos{\alpha}+L\sin{\alpha})-g\sin{\theta}\\
+    \dot{v} &=pw-ru+\frac{1}{m}Y+g\sin{\phi}\cos{\theta}\\
+    \dot{w} &=qu-pv+\frac{1}{m}(F_{T}\sin{\epsilon}-D\sin{\alpha}-L\cos{\alpha})+g\cos{\phi}\cos{\theta}\\
+    \begin{bmatrix} \dot{x} \\ \dot{y} \\ \dot{z} \end{bmatrix} &= C_{IB}\begin{bmatrix}
+    u\\v\\w \end{bmatrix}+\mvec{\mathcal{I}}{w}{}
+\end{align*}
+
+\textbf{EoM Rotation (Assumed $I_{xz} \approx 0$ }
+\begin{align*}
+    \dot{p} &= \frac{1}{I_{xx}}(L_{m}+L_{m_{T}}-qr(I_{zz}-I_{yy}))\\
+    \dot{q} &= \frac{1}{I_{yy}}(M_{n}+M_{m_{T}}-pr(I_{xx}-I_{zz}))\\
+    \dot{r} &= \frac{1}{I_{zz}}(N_{m}+N_{m_{T}}-pq(I_{yy}-I_{xx}))\\
+    \begin{bmatrix} \dot{\phi} \\ \dot{\theta} \\ \dot{\psi}
+    \end{bmatrix} &= J_{r}^{-1}\begin{bmatrix}
+    p \\ q \\ r
+    \end{bmatrix} = \begin{bmatrix}
+    p+q\tanh{\theta}\sin{\phi}+r\tan{\theta}\cos{\phi}\\
+    q\cos{\phi}-r\sin{\phi}\\
+    q\frac{\sin{\phi}}{\cos{\theta}}+r\frac{\cos{\phi}}{\cos{\theta}}
+    \end{bmatrix}
+\end{align*}
+
+\subsection{Control}
+\includegraphics[width=1\linewidth]{images/FW_ControlLoop.png}\\
+\textbf{Steady level turning flight}
+$\mvec{\mathcal{B}}{\dot{v}}{a}=\mvec{\mathcal{B}}{\dot{\omega}}{}=0$ Steady (unaccelerated)\\
+$\theta=\alpha \rightarrow \gamma =0 \textrm{Level}$\\
+$\phi=\textrm{const.}\neq 0 \textrm{Turning}$\\
+$\xi=\psi \textrm{No Sideslip}$\\
+$Y=0$ Coordinated turn\\
+$L$ increases with $\frac{1}{\cos{\phi}}$\\
+$V_{min}$ increases with $\sqrt{\frac{1}{\cos{\phi}}}$\\
+From Force balance and assumption $\dot{\psi} \approx \dot{\xi}$
+
+
+
+
+
 
 %\subsection*{Support-consistent dynamics}
 %\begin{itemize}
@@ -801,7 +952,6 @@ For aircraft rotation, use Tait-Bryan angles (like for copters).
 %\item Inverse dynamics (may have multiple solutions): \\
 %$ {\bm \tau}^* = ({\bf N}^T_c {\bf S}^T)^+({\bf N}_c^T({\bf M}\dot{\bf u} + {\bf b + g})) + \mathcal{N}({\bf N}^T_c {\bf S}^T){\bm \tau}^*_0 $
 %\end{itemize}
-
 
 
 
