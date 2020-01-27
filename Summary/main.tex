@@ -550,7 +550,7 @@ Generalized framework to control motion and force. \textbf{End-effector dynamics
 represent the end-effector inertia, centrifugal/coriolis and gravitational terms in task space.\\
 Following from the dynamics the \textbf{end-effector control} can be found:
 $$\bm\tau^* = \hat{\bf J}^T(\hat{\bm\Lambda} \dot{\bf w}_e^* + \hat{\bm\mu} + \hat{\bf p})$$
-$$\bf w_{e}^* =k_{p}\begin{pmatrix} r_{e}^* -r_{e}\\ \Delta \phi_{e}\end{pmatrix}+k_{d}(w_{e}^* - w_{e})$$
+$$\bf \dot{w}_{e}^* =k_{p}\begin{pmatrix} r_{e}^* -r_{e}\\ \Delta \phi_{e}\end{pmatrix}+k_{d}(w_{e}^* - w_{e})$$
 $$ \Rightarrow \begin{pmatrix} r_{e}^* -r_{e}\\ \Delta \phi_{e}\end{pmatrix} =\begin{bmatrix}
 \mathbb{1} & 0 \\ 0 & E_{R} \end{bmatrix}$$
 $$\dot{\bf w}_e^* = k_p{\bf E}(\bm\chi^*_e \boxminus \bm\chi_e) + k_d({\bf w}_e^* - {\bf w}_e) \underbrace{+ \dot{\bf w}_e^*(t)}_\text{trajectory control} $$
